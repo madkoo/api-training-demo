@@ -1,4 +1,3 @@
-# Fun ex
 
 # **GitHub Actions Workflow Lab**
 
@@ -56,26 +55,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 	  
-		//TODO: add step to checkout repository
-	  
-		//Get token
-		- name: Get Token for checkout target organizatiom
-        id: get_workflow_token_target
-        uses: peter-murray/workflow-application-token-action@v2
-        with:
-          application_id: ${{ secrets.APP_ID }}
-          application_private_key: ${{ secrets.APP_SECRET }}
+//TODO: add step to checkout repository
+
+//Get token
+    - name: Get Token for checkout target organizatiom
+      id: get_workflow_token_target
+      uses: peter-murray/workflow-application-token-action@v2
+      with:
+       application_id: ${{ secrets.APP_ID }}
+       application_private_key: ${{ secrets.APP_SECRET }}
           
 
 //TODO: Add step to read input by using action peter-murray/issue-forms-body-parser
-		- name: Run Issue form parser
-	    id: parse
-	    uses: peter-murray/issue-forms-body-parser@v2.0.0
-	    with:
-	      issue_id: ${{ github.event.issue.number }}
-	      separator: '###'
-	      label_marker_start: '>>'
-	      label_marker_end: '<<'
+    - name: Run Issue form parser
+      id: parse
+      uses: peter-murray/issue-forms-body-parser@v2.0.0
+      with:
+        issue_id: ${{ github.event.issue.number }}
+        separator: '###'
+        label_marker_start: '>>'
+        label_marker_end: '<<'
 
     - name: Start Workflow Comment
       uses: actions/github-script@v6
@@ -91,7 +90,7 @@ jobs:
 		
 		//TODO: Add step to read input by using 
 
-		- name: Publish output variables
+      - name: Publish output variables
         uses: actions/github-script@v6
         id: generate_variables
         env:
