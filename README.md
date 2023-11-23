@@ -55,9 +55,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 	  
-//TODO: add step to checkout repository
+#TODO: add step to checkout repository
 
-//Get token
+#Get token
     - name: Get Token for checkout target organizatiom
       id: get_workflow_token_target
       uses: peter-murray/workflow-application-token-action@v2
@@ -66,7 +66,7 @@ jobs:
        application_private_key: ${{ secrets.APP_SECRET }}
           
 
-//TODO: Add step to read input by using action peter-murray/issue-forms-body-parser
+#TODO: Add step to read input by using action peter-murray/issue-forms-body-parser
     - name: Run Issue form parser
       id: parse
       uses: peter-murray/issue-forms-body-parser@v2.0.0
@@ -88,7 +88,7 @@ jobs:
             body: 'Workflow started 🚀'
           });
 		
-		//TODO: Add step to read input by using 
+		#TODO: Add step to read input by using 
 
       - name: Publish output variables
         uses: actions/github-script@v6
