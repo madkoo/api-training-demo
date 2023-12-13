@@ -1,12 +1,24 @@
-### 2. **Create a New Workflow**
+#  **Create a New Workflow**
 
 - Go to the **`Actions`** tab in your repository.
 - Click on **`New workflow`** and choose **`set up a workflow yourself`**.
 
-** 3. Configure the Workflow File **
+## 1. Configure the Workflow File **
 
-In the `**issue_workflow.yml`** file, add the following content:
+In the `issue_workflow.yml` file, add the following steps to the content:
 
+* Trigger on issue creation or update (types: [opened, edited])
+* Checkout the repository
+* Get the Github App token using the action peter-murray/workflow-application-token-action
+* Parse the issue body using the action peter-murray/issue-forms-body-parser
+* Start a comment on the issue to indicate the workflow has started
+* Create a new repository using the Github API
+* Finish a comment on the issue to indicate the workflow has finished
+* Add secerts used in the workflow to the repository
+
+<details>
+    <summary>Solution</Summary>
+    
 ```yaml
 name: Issue Triggered Workflow
 
@@ -92,47 +104,13 @@ jobs:
 
 ```
 
-### **4. Create the Reusable Workflow**
+</details>
 
-- Create a new file in **`.github/workflows/`** named **`create_repo_workflow.yml`**.
-- Add the following content:
 
-```yaml
-yam
-name: Create Repository Workflow
+### 1. Commit the Workflow File**
 
-on:
-  workflow_call:
-    inputs:
-      repo-name:
-        required: true
-        type: string
-		 secrets:
-      temp-token:
-        required: true
-
-jobs:
-  create-repository:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Create a New Repository
-      uses: actions/github-script@v6
-      with:
-				github-token: ${{ secrets.temp-token }}
-        script: |
-          const repoName = ${{ inputs.repo-name }};
-          // Logic to create a new repository
-					octokit.rest.repos.createForAuthenticatedUser({
-					  repoName,
-					});
-
-```
-
-### **5. Commit the Workflow File**
-
-* Commit the **`issue_workflow.yml`** and **`create_repo_workflow.yml`** files to your repository.
-
-* Set up necessery secrets, to retrive a temporary the token from the Github App. Make sure Github App has all of the needed permissions
+* Commit the `issue_workflow.yml`  file to your repository.
+* Set up necessery secrets that were used in the workflow, to retrive a temporary the token from the Github App. Make sure Github App has all of the needed permissions
 
 ### **4. Testing the Workflow**
 
