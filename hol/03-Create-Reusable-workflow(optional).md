@@ -21,27 +21,32 @@ on:
         type: string
       issue_number:
         required: true
-        type: number
-    secrets:
-      temp-token:
-        required: true
+        type: string
+    
 
 jobs:
   create-comment:
     runs-on: ubuntu-latest
     steps:
+    - name: Get Token for checkout target organizatiom
+            id: get-token
+            uses: peter-murray/workflow-application-token-action@v2
+            with:
+                application_id: ${{ secrets.APP_ID }}
+                application_private_key: ${{ secrets.APP_SECRET }}
+
     - name: Add comment to issue
-      uses: actions/github-script@v6
-        with:
-            github-token: ${{ inputs.temp-token }}
-            script: |
-              const issueComment = context.payload.issue.number;
-              github.rest.issues.createComment({
-                issue_number: ${{inputs.issue_number}},
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: ${{ inputs.issue_comment }}
-              });
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ steps..tempToken }}
+        script: |
+            const issueComment = context.payload.issue.number;
+            github.rest.issues.createComment({
+            issue_number: ${{inputs.issue_number}},
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: ${{ inputs.issue_comment }}
+            });
 
 ```
 </details>
@@ -49,7 +54,6 @@ jobs:
 ###  Update the Workflow
 
 - Update the **`issue_workflow.yml`** file to use the new reusable workflow.
-- Move getting Github App token to the top of the workflow in a different job and output the token so that it can be used in the other jobs.
 - Have different jobs to call out the reusabe workflow to start and finish the workflow.
 
 
@@ -65,31 +69,17 @@ on:
     types: [opened, edited]
 
 jobs:
-    get-token:
-        runs-on: ubuntu-latest
-        outputs:
-            token: ${{ steps.get_workflow_token_target.outputs.token }}
-        steps:
-            - name: Get Token for checkout target organizatiom
-                id: get_workflow_token_target
-                uses: peter-murray/workflow-application-token-action@v2
-                with:
-                    application_id: ${{ secrets.APP_ID }}
-                    application_private_key: ${{ secrets.APP_SECRET }}
-        
-    start-workflow:            ## use token from get-token job
-        - name: Comment on issue
-            uses: ./.github/workflows/comment_in_issue_workflow.yml
-            with:
-                issue_comment: "Workflow started"
-                issue_number: ${{ github.event.issue.number }}
-            secrets: 
-                temp-token: ${{ needs.get-token.outputs.token }}
-
+   
+    start-workflow:           
+        uses: ./.github/workflows/comment_in_issue_workflow.yml
+        with:
+            issue_comment: "Workflow started"
+            issue_number: ${{ github.event.issue.number }}
+        secrets: inherit
 
     handle-issue:
+        needs: [start-workflow]
         runs-on: ubuntu-latest
-        needs: get-token
         steps:
         
             # Checkout
@@ -98,14 +88,13 @@ jobs:
 
     ...
 
-    finish-workflow:            ## use token from get-token job
-        - name: Comment on issue
-            uses: ./.github/workflows/comment_in_issue_workflow.yml
-            with:
+    finish-workflow:            
+        needs: handle-issue   
+        uses: ./.github/workflows/comment_in_issue_workflow.yml
+        with:
             issue_comment: "Workflow Finished"
             issue_number: ${{ github.event.issue.number }}
-            secrets: 
-            temp-token: ${{ needs.get-token.outputs.token }}
+        secrets: inherit           
     ...
 
     
