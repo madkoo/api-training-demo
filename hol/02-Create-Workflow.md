@@ -59,9 +59,9 @@ jobs:
           with:
             github-token: ${{ steps.get_workflow_token_target.outputs.token }}
             script: |
-              const issueComment = context.payload.issue.number;
+              const issueNr = context.payload.issue.number;
               github.rest.issues.createComment({
-                issue_number: issueComment,
+                issue_number: issueNr,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 body: 'Workflow started 🚀'
@@ -94,9 +94,9 @@ jobs:
           with:
             github-token: ${{ steps.get_workflow_token_target.outputs.token }}
             script: |
-              const issueComment = context.payload.issue.number;
+              const issueNr = context.payload.issue.number;
               github.rest.issues.createComment({
-                issue_number: issueComment,
+                issue_number: issueNr,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 body: 'Workflow finished 🏁'
@@ -112,12 +112,3 @@ jobs:
 * Commit the `issue_workflow.yml`  file to your repository.
 * Set up necessery secrets that were used in the workflow, to retrive a temporary the token from the Github App. Make sure Github App has all of the needed permissions
 
-### **4. Testing the Workflow**
-
-- Create or update an issue in your repository.
-- Observe the Actions tab to see your workflow run.
-
-### **Notes**
-
-- Ensure your script correctly parses the issue body to extract repository name and owner for creating a new repository.
-- Adjust the privacy settings of the new repository as needed in the script.
